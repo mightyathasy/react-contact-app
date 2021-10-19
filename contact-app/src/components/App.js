@@ -1,6 +1,6 @@
-import React, {useState, useEffect} from "react";
-import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
-import {v4 as uuid} from "uuid";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { v4 as uuid } from "uuid";
 import api from "../api/contacts";
 import './App.css';
 import Header from "./Header";
@@ -11,8 +11,9 @@ import CoontactDetails from "./ContactDetails";
 
 function App() {
   const [contacts, setContacts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
 
-  // RetrieveContacts
   const retrieveContacts = async () => {
     const response = await api.get("/contacts");
     return response.data;
@@ -30,7 +31,7 @@ function App() {
 
   const updateContactHandler = async (contact) => {
     const response = await api.put(`/contacts/${contact.id}`, contact);
-    const {id, name, email} = response.data;
+    const { id } = response.data;
     setContacts(
       contacts.map((contact) => {
         return contact.id === id ? { ...response.data } : contact;
@@ -47,9 +48,20 @@ function App() {
     setContacts(newContactList);
   };
 
+  const searchHandler = (searchTerm) => {
+    setSearchTerm(searchTerm);
+    if(searchTerm !== "") {
+      const newContactList = contacts.filter((contact) => {
+        const contactClone = (({id, ...cont}) => cont)(contact);
+        return Object.values(contactClone).join(" ").toLowerCase().includes(searchTerm.toLowerCase());
+      });
+      setSearchResults(newContactList);
+    } else {
+      setSearchResults(contacts);
+    }
+  };
+
   useEffect(() => {
-    /* const retrieveContacts = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-    if (retrieveContacts) setContacts(retrieveContacts); */
     const getAllContacts = async () => {
       const allContacts = await retrieveContacts();
       if(allContacts) setContacts(allContacts);
@@ -57,10 +69,6 @@ function App() {
 
     getAllContacts();
   }, []);
-
-  useEffect(() => {
-    //localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(contacts));
-  }, [contacts]);
 
   return (
     <div className="ui container">
@@ -70,30 +78,32 @@ function App() {
           <Route  path="/" exact 
                   render={(props) => (
                     <ContactList 
-                      {...props} 
-                      contacts={contacts} 
-                      getContactId={removeContactHandler} 
+                      { ...props } 
+                      contacts={ searchTerm.length < 1 ? contacts : searchResults } 
+                      getContactId={ removeContactHandler }
+                      term={ searchTerm }
+                      searchKeyword={ searchHandler }
                     />
                   )}
           />
           <Route  path="/add" exact 
                   render={(props) => (
                     <AddContact 
-                      {...props}
-                      addContactHandler={addContactHandler}
+                      { ...props }
+                      addContactHandler={ addContactHandler }
                     />
                   )} 
           />
           <Route  path="/edit/:id" exact 
                   render={(props) => (
                     <EditContact 
-                      {...props}
-                      updateContactHandler={updateContactHandler}
+                      { ...props }
+                      updateContactHandler={ updateContactHandler }
                     />
                   )} 
           />
           <Route  path="/contact/:id" 
-                  component={CoontactDetails} 
+                  component={ CoontactDetails } 
           />
         </Switch>
       </Router>

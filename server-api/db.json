@@ -2,8 +2,23 @@
   "contacts": [
     {
       "id": "7464289a-deaa-46b6-9ff5-d9de21d720dd",
-      "name": "Tóth Ákos asfa",
+      "name": "Tóth Ákos",
       "email": "bmreniorem@gmail.com"
+    },
+    {
+      "id": "1353eba1-924a-4c2d-b17e-2fe63077d1d9",
+      "name": "Példa Géza",
+      "email": "bmreio@mtirne.com"
+    },
+    {
+      "id": "d6217d91-32f2-4c66-ae26-a5eac0d36c86",
+      "name": "John Doe",
+      "email": "john.doe@alternategmail.com"
+    },
+    {
+      "id": "e4729048-3607-41fc-a2fa-9d54282c9e99",
+      "name": "John Undoe",
+      "email": "john.undoe@alternategmail.com"
     }
   ]
 }
